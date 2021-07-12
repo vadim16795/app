@@ -31,17 +31,15 @@ def select():
 def create_table():
     connection = psycopg2.connect(dbname='postgres', user='varkhipov@varkhipovazurepgsqlsrv', password='H@Sh1CoR3!', host='varkhipovazurepgsqlsrv.postgres.database.azure.com')
     cursor = connection.cursor()
-    start_time = time.time()
-    create_table_query = ("CREATE TABLE characters ( id SERIAL generated always as identity, name character varying, gender character varying,homeworld character varying);")
+    create_table_query = ("CREATE TABLE characters ( id SERIAL, name character varying, gender character varying,homeworld character varying);")
     cursor.execute(create_table_query)
     connection.commit()
-    end_time = time.time() - start_time
     time.sleep(3)
     select_query = """ SELECT * FROM characters"""
     cursor.execute(select_query)
     records = cursor.fetchall()
     if records is not None:
-        return "OK, Created in " + str(end_time)
+        return "Table created"
     connection.close()
     cursor.close()
 
