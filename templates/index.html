@@ -1,12 +1,8 @@
 {% extends 'layout.html' %}
 {% block body %}
 Hello,World!
-<button id="myButton" class="float-left submit-button" >Home</button>
+h1>The button Element</h1>
 
-<script type="text/javascript">
-    document.getElementById("myButton").onclick = function () {
-        location.href = "https://varkhipovwebapp.azurewebsites.net/ping";
-    };
-</script>
+<button type="button" onclick="alert('Hello world!')">Click Me!</button>
 
 {% endblock %}
