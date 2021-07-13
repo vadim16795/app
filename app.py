@@ -64,3 +64,6 @@ def create_table():
 @app.route('/test')
 def articles():
     return render_template('articles.html', articles=Articles_return)
+
+if __name__ == '__main__':
+    app.run()
