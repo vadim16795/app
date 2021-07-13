@@ -53,8 +53,6 @@ def create_table():
     cursor.close()
 
 
-app.route('/test')
-
-
+@app.route('/test')
 def articles():
     return render_template('articles.html', articles=Articles_return)
