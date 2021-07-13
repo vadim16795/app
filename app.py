@@ -48,15 +48,15 @@ def create_table():
         "CREATE TABLE characters ( id SERIAL, name character varying, gender character varying,homeworld character varying);")
     try:
         cursor.execute(create_table_query)
-#        connection.commit()
-#        connection.close()
-#        cursor.close()
+        connection.commit()
+        connection.close()
+        cursor.close()
         resp = jsonify(success=True)
         resp.status_code = 200
         return resp
 
     except psycopg2.Error as e:
-        resp = jsonify(success=False, error=e)
+        resp = jsonify(success=False,reason = e.pgerror)
         resp.status_code = 500
         return resp
 
