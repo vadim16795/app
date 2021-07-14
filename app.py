@@ -23,8 +23,14 @@ def ping():
 
 @app.route('/select')
 def select():
-    connection = psycopg2.connect(dbname='postgres', user='varkhipov@varkhipovazurepgsqlsrv', password='H@Sh1CoR3!',
-                                  host='varkhipovazurepgsqlsrv.postgres.database.azure.com')
+    try:
+        connection = psycopg2.connect(dbname='postgres', user='varkhipov@varkhipovazurepgsqlsrv', password='H@Sh1CoR3!',
+                                      host='varkhipovazurepgsqlsrv.postgres.database.azure.com')
+    except psycopg2.Error as e:
+        resp = jsonify(success=False, error=e)
+        resp.status_code = 500
+        return resp
+
     cursor = connection.cursor()
     select_query = """ SELECT * FROM characters"""
     cursor.execute(select_query)
