@@ -28,11 +28,8 @@ def select():
     cursor = connection.cursor()
     select_query = """ SELECT * FROM characters"""
     cursor.execute(select_query)
-    records = cursor.fetchall()
-    if records is not None:
-        return "OK"
-    connection.close()
-    cursor.close()
+    data = cursor.fetchall()
+    return render_template('select.html', data=data)
 
 
 @app.route('/create')
@@ -89,17 +86,10 @@ def insert_func():
         insert_query = """ INSERT INTO characters (name, gender,homeworld) VALUES (%s,%s,%s)"""
         values_to_insert = (
             parsed_page['results'][i]['name'], parsed_page['results'][i]['gender'], parsed_page_homeworld['name'])
-        try:
-            cursor.execute(insert_query, values_to_insert)
-            connection.commit()
-            resp = jsonify(success=True)
-            resp.status_code = 200
-        except psycopg2.Error as e:
-            resp = jsonify(success=False, error=e)
-            resp.status_code = 500
-            return resp
+        cursor.execute(insert_query, values_to_insert)
+        connection.commit()
 
-        return resp
+    return "ok"
 
 
 if __name__ == '__main__':
