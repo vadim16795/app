@@ -33,7 +33,14 @@ def select():
 
     cursor = connection.cursor()
     select_query = """ SELECT * FROM characters"""
-    cursor.execute(select_query)
+    try:
+        cursor.execute(select_query)
+        
+    except psycopg2.Error as e:
+        resp = jsonify(success=False, error=e)
+        resp.status_code = 500
+        return resp
+
     data = cursor.fetchall()
     return render_template('select.html', data=data)
 
