@@ -35,7 +35,7 @@ def select():
     select_query = """ SELECT * FROM characters"""
     try:
         cursor.execute(select_query)
-        
+
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e)
         resp.status_code = 500
