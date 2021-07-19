@@ -2,16 +2,14 @@ from flask import Flask, render_template, jsonify
 import psycopg2
 import urllib.request
 import json
-from data import Articles
+
 
 app = Flask(__name__)
-
-Articles_return = Articles()
 
 
 @app.route('/')
 def index():
-    return render_template('home.html')
+    return render_template('index.html')
 
 
 @app.route('/ping')
@@ -42,7 +40,7 @@ def select():
         return resp
 
     data = cursor.fetchall()
-    return render_template('select.html', data=data)
+    return render_template('characters.html', title = 'Characters', data=data)
 
 
 @app.route('/create')
@@ -73,9 +71,7 @@ def create_table():
         return resp
 
 
-@app.route('/test')
-def articles():
-    return render_template('articles.html', articles=Articles_return)
+
 
 
 @app.route('/insert')
