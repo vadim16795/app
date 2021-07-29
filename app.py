@@ -4,6 +4,7 @@ import truncate_func
 import urllib.request
 import json
 import time
+import db
 
 app = Flask(__name__)
 
@@ -13,13 +14,18 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/select')
-def select():
+@app.route('/planets')
+def planets():
+    return 'Not Implemented yet'
+
+
+@app.route('/characters')
+def characters():
     try:
-        connection = psycopg2.connect(dbname='postgres', user='varkhipov@varkhipovazurepgsqlsrv', password='H@Sh1CoR3!',
-                                      host='varkhipovazurepgsqlsrv.postgres.database.azure.com')
+        connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
+                                      host=db.host)
     except psycopg2.Error as e:
-        resp = jsonify(success=False, error=e)
+        resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
         resp.status_code = 500
         return resp
 
@@ -37,12 +43,12 @@ def select():
     return render_template('characters.html', title='Characters', data=data)
 
 
-def insert_func(api_url):
+def characters_insert_func(api_url):
     try:
-        connection = psycopg2.connect(dbname='postgres', user='varkhipov@varkhipovazurepgsqlsrv', password='H@Sh1CoR3!',
-                                      host='varkhipovazurepgsqlsrv.postgres.database.azure.com')
+        connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
+                                      host=db.host)
     except psycopg2.Error as e:
-        resp = jsonify(success=False, error=e)
+        resp = jsonify(success=False, error=e, message='cant connect to database')
         resp.status_code = 500
         return resp
     cursor = connection.cursor()
@@ -66,21 +72,73 @@ def insert_func(api_url):
             return resp
 
 
+def planets_insert_func(api_url):
+    try:
+        connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
+                                      host=db.host)
+    except psycopg2.Error as e:
+        resp = jsonify(success=False, error=e.pgerror, message='cant connect to database')
+        resp.status_code = 500
+        return resp
+    cursor = connection.cursor()
+    api_url_response = urllib.request.urlopen(api_url)
+    api_url_response_page = api_url_response.read().decode('utf-8')
+    parsed_page = json.loads(api_url_response_page)
+    for i in parsed_page['results']:
+
+        if len(i['residents']) > 0:
+            residents_list = []
+            for element in i['residents']:
+                api_url_response = urllib.request.urlopen(element)
+                api_url_response_page = api_url_response.read().decode('utf-8')
+                parsed_page_residents = json.loads(api_url_response_page)
+
+                residents_list.append(parsed_page_residents['name'])
+
+            #            print('Name=', i['name'], '|', 'Gravity=', i['gravity'], '|', 'Climate=', i['climate'], '|', 'Residents = ',
+            #                  residents_list)
+            insert_query = """ INSERT INTO planets (name, gravity,climate,residents) VALUES (%s,%s,%s,%s)"""
+            values_to_insert = (
+                str(i['name']), str(i['gravity']), str(i['climate']), residents_list)
+            try:
+                cursor.execute(insert_query, values_to_insert)
+                connection.commit()
+            except psycopg2.Error as e:
+                resp = jsonify(success=False, reason=e.pgerror)
+                resp.status_code = 500
+                return resp
+        else:
+            #            print('Name=', i['name'], '|', 'Gravity=', i['gravity'], '|', 'Climate=', i['climate'], '|', 'Residents = ',
+            #                  'None')
+            insert_query = """ INSERT INTO planets (name, gravity,climate,residents) VALUES (%s,%s,%s)"""
+            values_to_insert = (
+                str(i['name']), str(i['gravity']), str(i['climate']))
+
+            try:
+                cursor.execute(insert_query, values_to_insert)
+                connection.commit()
+            except psycopg2.Error as e:
+                resp = jsonify(success=False, reason=e.pgerror)
+                resp.status_code = 500
+                return resp
+
+
 @app.route('/updatedb')
 def update_db():
     start_time = time.time()
     try:
         truncate_func.truncate_table("characters")
-    except:
-        resp = jsonify(success=False, error='failed to truncate table')
+        truncate_func.truncate_table("planets")
+    except psycopg2.Error as e:
+        resp = jsonify(success=False, reason=e.pgerror, message='cant truncate one or more tables')
         resp.status_code = 500
         return resp
-    url_list = []
-    my_url = 'https://swapi.dev/api/people/'
-    url_list.append(my_url)
-    my_url_response = urllib.request.urlopen(my_url)
-    my_url_response_page = my_url_response.read().decode('utf-8')
-    parsed_page = json.loads(my_url_response_page)
+    people_url_list = []
+    people_url = 'https://swapi.dev/api/people/'
+    people_url_list.append(people_url)
+    people_url_response = urllib.request.urlopen(people_url)
+    people_url_response_page = people_url_response.read().decode('utf-8')
+    parsed_page = json.loads(people_url_response_page)
     next_url = parsed_page['next']
     while next_url is not None:
         next_api_url = next_url
@@ -88,9 +146,26 @@ def update_db():
         api_url_response_page = api_url_response.read().decode('utf-8')
         parsed_page = json.loads(api_url_response_page)
         next_url = parsed_page['next']
-        url_list.append(str(next_api_url))
-    for i in url_list:
-        insert_func(i)
+        people_url_list.append(str(next_api_url))
+    for i in people_url_list:
+        characters_insert_func(i)
+
+    planets_url_list = []
+    planets_url = 'https://swapi.dev/api/planets'
+    planets_url_list.append(planets_url)
+    planets_url_response = urllib.request.urlopen(planets_url)
+    planets_url_response_page = planets_url_response.read().decode('utf-8')
+    parsed_page = json.loads(planets_url_response_page)
+    next_url = parsed_page['next']
+    while next_url is not None:
+        next_api_url = next_url
+        api_url_response = urllib.request.urlopen(next_url)
+        api_url_response_page = api_url_response.read().decode('utf-8')
+        parsed_page = json.loads(api_url_response_page)
+        next_url = parsed_page['next']
+        planets_url_list.append(str(next_api_url))
+    for i in planets_url_list:
+        planets_insert_func(i)
     end_time = time.time() - start_time
     resp = jsonify(success=True, time=str(end_time))
     resp.status_code = 200
