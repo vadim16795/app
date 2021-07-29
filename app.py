@@ -129,7 +129,8 @@ def planets_insert_func(api_url):
         else:
             #            print('Name=', i['name'], '|', 'Gravity=', i['gravity'], '|', 'Climate=', i['climate'], '|', 'Residents = ',
             #                  'None')
-            insert_query = """ INSERT INTO planets (name, gravity,climate,residents) VALUES (%s,%s,%s)"""
+            residents = 'None'
+            insert_query = """ INSERT INTO planets (name, gravity,climate) VALUES (%s,%s,%s)"""
             values_to_insert = (
                 str(i['name']), str(i['gravity']), str(i['climate']))
 
