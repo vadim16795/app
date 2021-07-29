@@ -16,7 +16,26 @@ def index():
 
 @app.route('/planets')
 def planets():
-    return 'Not Implemented yet'
+    try:
+        connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
+                                      host=db.host)
+    except psycopg2.Error as e:
+        resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
+        resp.status_code = 500
+        return resp
+
+    cursor = connection.cursor()
+    select_query = """ SELECT * FROM planets"""
+    try:
+        cursor.execute(select_query)
+
+    except psycopg2.Error as e:
+        resp = jsonify(success=False, error=e)
+        resp.status_code = 500
+        return resp
+
+    data = cursor.fetchall()
+    return render_template('planets.html', title='Planets', data=data)
 
 
 @app.route('/characters')
@@ -48,7 +67,7 @@ def characters_insert_func(api_url):
         connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
                                       host=db.host)
     except psycopg2.Error as e:
-        resp = jsonify(success=False, error=e, message='cant connect to database')
+        resp = jsonify(success=False, error=e.pgerror, message='cant connect to database')
         resp.status_code = 500
         return resp
     cursor = connection.cursor()
