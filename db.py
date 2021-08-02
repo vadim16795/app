@@ -1,4 +1,4 @@
-dbname = 'docker'
-user = 'docker'
-password='docker'
-host='postgres'
+dbname = 'moodle'
+user = 'moodle'
+password='moodle'
+host='db'

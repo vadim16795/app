@@ -3,7 +3,7 @@ version: '3'
 services:
   db:
     image: postgres:12.7
-    container_name: postgres
+    container_name: db
     volumes:
     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
@@ -13,11 +13,9 @@ services:
       retries: 10
     restart: always
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=password
-      - APP_DB_USER=docker
-      - APP_DB_PASS=docker
-      - APP_DB_NAME=docker
+      - POSTGRES_USER: moodle
+      - POSTGRES_PASSWORD: "moodle"
+      - POSTGRES_DB: moodle
     ports:
       - 5432:5432
   app:
