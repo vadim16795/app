@@ -8,4 +8,4 @@
 #·         planet: Name, Gravitation, Climate, and other if it is necessary
 
 #Create a report contenting information (see above) about the planet (or planets) with a list of characters who visits that planet
-#(actually residents of that planet!!)
+#(!!actually residents of that planet!!)
