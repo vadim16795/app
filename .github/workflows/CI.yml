@@ -21,5 +21,4 @@ jobs:
       - name: Build the stack
         run: docker-compose up -d
       - name: Test
-        run: |
-          pipenv run pytest
+        run: docker-compose run test
