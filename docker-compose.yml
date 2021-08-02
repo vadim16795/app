@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  postgres:
+  db:
     image: postgres:12.7
     container_name: postgres
     volumes:
@@ -20,3 +20,12 @@ services:
       - APP_DB_NAME=docker
     ports:
       - 5432:5432
+  app:
+    build: .
+    command: python3 -m  flask run --host=0.0.0.0
+    volumes:
+    - .:/app
+    ports:
+    - "80:5000"
+    depends_on:
+      - db
