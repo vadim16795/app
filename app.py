@@ -7,7 +7,7 @@ import time
 import db
 import os
 app = Flask(__name__)
-app.config.from_object('docker_settings')
+app.config.from_object('app_settings')
 #app.config.from_envvar('DOCKERAPP_CONFIG')
 
 
