@@ -5,7 +5,7 @@ import urllib.request
 import json
 import time
 import db
-import docker_settings
+import os
 
 app = Flask(__name__)
 app.config.from_object('production_settings')
@@ -20,8 +20,8 @@ def index():
 @app.route('/planets')
 def planets():
     try:
-        connection = psycopg2.connect(dbname=docker_settings.DBNAME, dbuser=docker_settings.USER, dbpassword=docker_settings.PASSWORD,
-                                      host=docker_settings.HOST)
+        connection = psycopg2.connect(dbname=os.environ["DBNAME"], dbuser=os.environ["USER"], dbpassword=os.environ["PASSWORD"],
+                                      host=os.environ["HOST"])
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
         resp.status_code = 500
