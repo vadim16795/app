@@ -8,7 +8,7 @@ import db
 import os
 
 app = Flask(__name__)
-app.config.from_object('settings')
+app.config.from_object('production_settings')
 app.config.from_envvar('DOCKERAPP_CONFIG', silent=True)
 
 
