@@ -4,11 +4,8 @@ import truncate_func
 import urllib.request
 import json
 import time
-import db
 import os
 app = Flask(__name__)
-app.config.from_object('app_settings')
-#app.config.from_envvar('DOCKERAPP_CONFIG')
 
 
 @app.route('/')
@@ -43,8 +40,9 @@ def planets():
 @app.route('/characters')
 def characters():
     try:
-        connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
-                                      host=db.host)
+        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
+                                      password=os.getenv('PASSWORD'),
+                                      host=os.getenv('HOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
         resp.status_code = 500
@@ -66,8 +64,9 @@ def characters():
 
 def characters_insert_func(api_url):
     try:
-        connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
-                                      host=db.host)
+        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
+                                      password=os.getenv('PASSWORD'),
+                                      host=os.getenv('HOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message='cant connect to database')
         resp.status_code = 500
@@ -95,8 +94,9 @@ def characters_insert_func(api_url):
 
 def planets_insert_func(api_url):
     try:
-        connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
-                                      host=db.host)
+        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
+                                      password=os.getenv('PASSWORD'),
+                                      host=os.getenv('HOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message='cant connect to database')
         resp.status_code = 500

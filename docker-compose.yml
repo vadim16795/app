@@ -20,8 +20,6 @@ services:
       - 5432:5432
   app:
     build: .
-    env_file:
-      - app_settings.py
     environment:
       - DBNAME=docker
       - USER=docker
