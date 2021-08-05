@@ -21,7 +21,7 @@ services:
   app:
     build: .
     environment:
-      - DOCKERAPP_CONFIG=docker_settings.py
+      - DOCKERAPP_CONFIG=docker_settings.cfg
     command: python3 -m  flask run --host=0.0.0.0
     volumes:
     - .:/app
