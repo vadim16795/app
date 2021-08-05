@@ -5,8 +5,11 @@ import urllib.request
 import json
 import time
 import db
+import os
 
 app = Flask(__name__)
+app.config.from_object('settings')
+app.config.from_envvar('DOCKERAPP_CONFIG', silent=True)
 
 
 @app.route('/')
@@ -17,8 +20,8 @@ def index():
 @app.route('/planets')
 def planets():
     try:
-        connection = psycopg2.connect(dbname=db.dbname, user=db.user, password=db.password,
-                                      host=db.host)
+        connection = psycopg2.connect(dbname=os.environ['DBNAME'], user=os.environ['USER'], password=os.environ['PASSWORD'],
+                                      host=os.environ['HOST'])
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
         resp.status_code = 500

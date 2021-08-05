@@ -21,6 +21,8 @@ services:
   app:
     build: .
     command: python3 -m  flask run --host=0.0.0.0
+    environment:
+      environment=DOCKERAPP_CONFIG="docker_settings.py":
     volumes:
     - .:/app
     ports:
