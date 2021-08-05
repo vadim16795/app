@@ -7,6 +7,11 @@ import time
 import os
 app = Flask(__name__)
 
+os.environ['DBNAME'] = 'postgres'
+os.environ['USER'] = 'postgres'
+os.environ['PASSWORD'] = 'q1w2e3r4'
+os.environ['HOST'] = '127.0.0.1'
+
 
 @app.route('/')
 def index():
