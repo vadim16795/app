@@ -20,8 +20,14 @@ services:
       - 5432:5432
   app:
     build: .
+    env_file:
+      - docker_settings.py
     environment:
-      - DOCKERAPP_CONFIG=docker_settings.cfg
+      - DBNAME=docker
+      - USER=docker
+      - PASSWORD=docker
+      - DB=db
+
     command: python3 -m  flask run --host=0.0.0.0
     volumes:
     - .:/app

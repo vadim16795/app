@@ -8,8 +8,8 @@ import db
 import os
 
 app = Flask(__name__)
-#app.config.from_object('docker_settings')
-app.config.from_envvar('DOCKERAPP_CONFIG')
+app.config.from_object('docker_settings')
+#app.config.from_envvar('DOCKERAPP_CONFIG')
 
 
 @app.route('/')
