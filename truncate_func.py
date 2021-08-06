@@ -11,3 +11,4 @@ def truncate_table(tablename):
     cursor.execute("TRUNCATE TABLE %s" % tablename)
     connection.commit()
     return
+
