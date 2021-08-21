@@ -22,4 +22,4 @@ jobs:
       - name: Build the stack
         run: docker-compose up -d
       - name: Make tests with pytest
-        run: docker-compose exec -T app pytest
+        run: docker-compose exec -T app pytest -vv

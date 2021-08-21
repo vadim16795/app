@@ -90,12 +90,12 @@ def characters_insert_func(api_url):
             parsed_page['results'][i]['name'], parsed_page['results'][i]['gender'], parsed_page_homeworld['name'])
         try:
             cursor.execute(insert_query, values_to_insert)
-            connection.commit()
+#            connection.commit()
         except psycopg2.Error as e:
             resp = jsonify(success=False, reason=e.pgerror)
             resp.status_code = 500
             return resp
-
+        connection.commit()
 
 def planets_insert_func(api_url):
     try:
@@ -128,11 +128,12 @@ def planets_insert_func(api_url):
                 str(i['name']), str(i['gravity']), str(i['climate']), residents_list)
             try:
                 cursor.execute(insert_query, values_to_insert)
-                connection.commit()
+#                connection.commit()
             except psycopg2.Error as e:
                 resp = jsonify(success=False, reason=e.pgerror)
                 resp.status_code = 500
                 return resp
+            connection.commit()
         else:
             #            print('Name=', i['name'], '|', 'Gravity=', i['gravity'], '|', 'Climate=', i['climate'], '|', 'Residents = ',
             #                  'None')
@@ -142,11 +143,12 @@ def planets_insert_func(api_url):
 
             try:
                 cursor.execute(insert_query, values_to_insert)
-                connection.commit()
+#                connection.commit()
             except psycopg2.Error as e:
                 resp = jsonify(success=False, reason=e.pgerror)
                 resp.status_code = 500
                 return resp
+            connection.commit()
 
 
 @app.route('/updatedb')
