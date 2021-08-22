@@ -21,26 +21,41 @@ jobs:
       - name: Make tests with pytest
         run: docker-compose exec -T app pytest -vv
 
-  build:
+  setup-build-publish:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build
+       # Setup gcloud CLI
+      - uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
+        with:
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+       # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |-
+          gcloud --quiet auth configure-docker
+       # Build the Docker image
+      - name: Build Docker image
         env:
-          PROJECT_ID: myproject
+          PROJECT_ID: ${{ secrets.GKE_PROJECT }}
           IMAGE: prod_app
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: ${{ secrets.PROD_DB_HOST }}
+          DB_NAME: ${{ secrets.PROD_DB_NAME }}
+          DB_USER: ${{ secrets.PROD_DB_USER }}
+          DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+#          GKE_CLUSTER: cluster-1
+#          GKE_ZONE: us-central1-c
+          DEPLOYMENT_NAME: gke-test
         run: |-
           docker build \
             --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
-            --build-arg GITHUB_REF="$GITHUB_REF" \
+#            --build-arg GITHUB_REF="$GITHUB_REF" \
             .
 
-
+        # Push the Docker image to Google Container Registry
+        - name: Push Docker image to GCR
+          run: |-
+            docker push gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
 
