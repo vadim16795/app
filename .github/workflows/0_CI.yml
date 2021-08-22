@@ -55,5 +55,5 @@ jobs:
         # Push the Docker image to Google Container Registry
       - name: Publish Docker image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$IMAGE:GITHUB_SHA"
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
 
