@@ -49,12 +49,11 @@ jobs:
         run: |-
           docker build \
             --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_REF" \
-#            --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
             .
 
         # Push the Docker image to Google Container Registry
       - name: Publish Docker image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$IMAGE:GITHUB_REF"
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_REF"
 
