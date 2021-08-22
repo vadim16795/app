@@ -8,8 +8,7 @@ on:
     branches: [ master ]
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  IMAGE: prod_app
-#  DEPLOYMENT_NAME: prod_app
+
 
 jobs:
   test:
@@ -42,7 +41,6 @@ jobs:
       - name: Build Docker image
         env:
           PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-          IMAGE: prod_app
           DB_HOST: ${{ secrets.PROD_DB_HOST }}
           DB_NAME: ${{ secrets.PROD_DB_NAME }}
           DB_USER: ${{ secrets.PROD_DB_USER }}
@@ -52,9 +50,10 @@ jobs:
             --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             .
+          docker tag $IMAGE:$GITHUB_SHA prod_app:prod_app
 
         # Push the Docker image to Google Container Registry
       - name: Publish Docker image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+          docker push "gcr.io/$PROJECT_ID/prod_app:latest"
 
