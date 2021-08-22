@@ -44,15 +44,11 @@ jobs:
           DB_NAME: ${{ secrets.PROD_DB_NAME }}
           DB_USER: ${{ secrets.PROD_DB_USER }}
           DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
-#          GKE_CLUSTER: cluster-1
-#          GKE_ZONE: us-central1-c
-          DEPLOYMENT_NAME: gke-test
-        run: |-
-          docker build \
-            --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
-            --build-arg GITHUB_SHA="$GITHUB_SHA" \
-#            --build-arg GITHUB_REF="$GITHUB_REF" \
-            .
+        - run: |-
+            docker build \
+              --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
+              --build-arg GITHUB_SHA="$GITHUB_SHA" \
+              .
 
         # Push the Docker image to Google Container Registry
         - name: Push Docker image to GCR
