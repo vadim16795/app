@@ -39,9 +39,6 @@ jobs:
           gcloud --quiet auth configure-docker
 
        # Build the Docker image
-      - name: Create IMAGE and TAG
-        run: echo "::set-env name=IMAGE_WITH_TAG::gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
-
       - name: Build Docker image
         env:
           DB_HOST: ${{ secrets.PROD_DB_HOST }}
