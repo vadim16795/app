@@ -71,11 +71,12 @@ jobs:
         run: |-
           kubectl cluster-info
 
-        # Get pods info
-      -name: Get pods
+       # Get pods info
+      - name: Get pods
         run: |-
           kubectl get pods --all-namespaces
-      -name: Set image , build and deploy
+
+      - name: Set image , build and deploy
         run: |-
           ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
           ./kustomize build . | kubectl apply -f -
