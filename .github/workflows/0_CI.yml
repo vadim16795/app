@@ -60,7 +60,7 @@ jobs:
       # Deploy the Docker image to the GKE cluster
       - name: Deploy to GKE cluster!
         run: |-
-          kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+          kubectl create deployment $DEPLOYMENT_NAME --image="gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
           kubectl get deployments
 
 #          kubectl apply -f manifests
