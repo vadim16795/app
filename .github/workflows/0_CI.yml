@@ -34,20 +34,20 @@ jobs:
         with:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT }}
-          
- # Get the GKE credentials so we can deploy to the cluster
+
+       # Get the GKE credentials so we can deploy to the cluster
       - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
         with:
           cluster_name: prod-app-cluster
           location: europe-west1-c
           credentials: ${{ secrets.GKE_SA_KEY }}
+
        # Configure docker to use the gcloud command-line tool as a credential helper
       - run: |-
           gcloud --quiet auth configure-docker
 
        # Build the Docker image
       - name: Build Docker image
-
         run: |-
           docker build \
             --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" \
@@ -59,15 +59,30 @@ jobs:
       - name: Publish Docker image to GCR
         run: |-
           docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
-      # Set up kustomize
-#      - name: Set up Kustomize
-#        run: |-
-#          curl --location https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.2.0/kustomize_v4.2.0_linux_amd64.tar.gz | tar xz
-#          chmod u+x ./kustomize
-      # Deploy the Docker image to the GKE cluster
-      - name: Deploy to GKE cluster!
+
+        # Set up kustomize
+      - name: Set up Kustomize
+        run: |-
+          curl --location https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.2.0/kustomize_v4.2.0_linux_amd64.tar.gz | tar xz
+          chmod u+x ./kustomize
+
+        # Get cluster info
+      - name: Get cluster info
         run: |-
           kubectl cluster-info
+
+        # Get pods info
+      -name: Get pods
+        run: |-
+          kubectl get pods --all-namespaces
+      -name: Set image , build and deploy
+        run: |-
+          ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:TAG=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+          ./kustomize build . | kubectl apply -f -
+          kubectl rollout status deployment/$DEPLOYMENT_NAME
+          kubectl get services -o wide
+
+
 #          kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
 #          kubectl apply -f manifests
 #          kubectl rollout status deployment/$DEPLOYMENT_NAME

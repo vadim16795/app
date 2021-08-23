@@ -7,11 +7,23 @@ spec:
   selector:
     matchLabels:
       app: prod-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
   template:
     metadata:
       labels:
         app: prod-app
     spec:
       containers:
-        - name: prod-app
-          image: changeme
+      - name: prod-app
+        image: gcr.io/PROJECT_ID/IMAGE:TAG
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m
