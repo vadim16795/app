@@ -14,4 +14,4 @@ spec:
     spec:
       containers:
         - name: prod-app
-          image: gcr.io/PROJECT_ID/IMAGE:GITHUB_SHA
+          image: changeme
