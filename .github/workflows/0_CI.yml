@@ -8,8 +8,6 @@ on:
     branches: [ master ]
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  IMAGE_WITH_TAG: gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
-
 
 jobs:
 #  test:
@@ -40,11 +38,24 @@ jobs:
 
        # Build the Docker image
       - name: Build Docker image
+
         run: |-
-          docker build --tag "$IMAGE_WITH_TAG" .
+          docker build --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" .
 
         # Push the Docker image to Google Container Registry
       - name: Publish Docker image to GCR
         run: |-
-          docker push "$IMAGE_WITH_TAG"
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+      # Set up kustomize
+      - name: Set up Kustomize
+        run: |-
+          curl --location https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.2.0/kustomize_v4.2.0_linux_amd64.tar.gz | tar xz
+          chmod u+x ./kustomize
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy
+        run: |-
+          ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:GITHUB_SHA=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+#          ./kustomize build . | kubectl apply -f -
+#          kubectl rollout status deployment/$DEPLOYMENT_NAME
+#          kubectl get services -o wide
 

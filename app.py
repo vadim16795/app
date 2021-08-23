@@ -7,10 +7,10 @@ import time
 import os
 app = Flask(__name__)
 
-#os.environ['DBNAME'] = 'prod'
-#os.environ['USER'] = 'prod_app'
-#os.environ['PASSWORD'] = 'Oper@t10n!'
-#os.environ['HOST'] = '34.79.66.203'
+os.environ['DBNAME'] = 'prod'
+os.environ['USER'] = 'prod_app'
+os.environ['PASSWORD'] = 'Oper@t10n!'
+os.environ['HOST'] = '34.79.66.203'
 
 
 @app.route('/')
