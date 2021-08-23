@@ -57,7 +57,7 @@ jobs:
           curl --location https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.2.0/kustomize_v4.2.0_linux_amd64.tar.gz | tar xz
           chmod u+x ./kustomize
       # Deploy the Docker image to the GKE cluster
-      - name: Deploy
+      - name: Deploy to GKE
         run: |-
           ./kustomize edit set image gcr.io/PROJECT_ID/IMAGE:GITHUB_SHA=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
           kubectl apply -k .
