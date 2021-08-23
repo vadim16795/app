@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  IMAGE: prod_app
+  IMAGE_WITH_TAG: gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
 
 
 jobs:
@@ -40,16 +40,11 @@ jobs:
 
        # Build the Docker image
       - name: Build Docker image
-        env:
-          DB_HOST: ${{ secrets.PROD_DB_HOST }}
-          DB_NAME: ${{ secrets.PROD_DB_NAME }}
-          DB_USER: ${{ secrets.PROD_DB_USER }}
-          DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
         run: |-
-          docker build --tag "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA" .
+          docker build --tag "$IMAGE_WITH_TAG" .
 
         # Push the Docker image to Google Container Registry
       - name: Publish Docker image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA"
+          docker push "$IMAGE_WITH_TAG"
 
