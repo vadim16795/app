@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-#  IMAGE: prod-app
+  IMAGE: prod-app
 #  DEPLOYMENT_NAME: prod-app-deployment
 
 jobs:
@@ -50,7 +50,7 @@ jobs:
       - name: Build Docker image
         run: |-
           docker build \
-            --tag "gcr.io/$PROJECT_ID/prod-app:${GITHUB_SHA::8}" \
+            --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8}" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
             .
@@ -58,7 +58,7 @@ jobs:
         # Push the Docker image to Google Container Registry
       - name: Publish Docker image to GCR
         run: |-
-          docker push "gcr.io/$PROJECT_ID/prod-app:${GITHUB_SHA::8}"
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8}"
 
 #          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
         # Set up kustomize
