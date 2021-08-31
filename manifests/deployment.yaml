@@ -15,7 +15,7 @@ spec:
   template:
     metadata:
       labels:
-        app: prod-app
+        app: prod-app-deployment
     spec:
       containers:
       - name: prod-app
