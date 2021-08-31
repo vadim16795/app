@@ -9,7 +9,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   IMAGE: prod-app
-#  DEPLOYMENT_NAME: prod-app-deployment
+  DEPLOYMENT_NAME: prod-app-deployment
 
 jobs:
 #  test:
@@ -83,7 +83,7 @@ jobs:
 #          sleep 5
 #          kubectl get deployments
 #          sleep 5
-#          kubectl set image deployment/prod-app prod-app=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA --record
+#          kubectl set image deployment/prod-app-deployment prod-app=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8} --record
 #          kubectl rollout status deployment/prod-app
 #          kubectl get pods
 #          kubectl describe deployments

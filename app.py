@@ -5,6 +5,7 @@ import urllib.request
 import json
 import time
 import os
+from joblib import Parallel,delayed
 app = Flask(__name__)
 
 os.environ['DBNAME'] = 'prod'
@@ -198,6 +199,30 @@ def update_db():
     resp = jsonify(success=True, time=str(end_time))
     resp.status_code = 200
     return resp
+
+
+def worker(i):
+    print('worker ', i)
+    x = 0
+    while x < 1000:
+        print(x)
+        x += 1
+
+@app.route('/stress')
+def myfunc():
+    start_time = time.time()
+    Parallel(n_jobs=-1, prefer="processes", verbose=0)(
+            delayed(worker)(num)
+            for num in range(12000)
+
+    )
+    end_time = time.time() - start_time
+    resp = jsonify(success=True, time=str(end_time))
+    resp.status_code = 200
+    return resp
+
+
+
 
 
 if __name__ == '__main__':
