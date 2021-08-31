@@ -63,11 +63,11 @@ jobs:
         # Set image and deploy to Google Kubernetes Engine
       - name: Set image and deploy to GKE
         run: |-
-          kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8} --dry-run=client -o yaml
           kubectl set image deployment/$DEPLOYMENT_NAME prod-app=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8}
           kubectl apply -f manifests
           kubectl rollout status deployment/$DEPLOYMENT_NAME
 #          kubectl autoscale deployment $DEPLOYMENT_NAME --cpu-percent=50 --min=1 --max=10
+#          kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8} --dry-run=client -o yaml
 
       - name: Get services
         run: |-

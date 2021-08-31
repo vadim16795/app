@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: prod-app-deployment
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: prod-app
@@ -24,6 +24,21 @@ spec:
         - containerPort: 5000
         resources:
           requests:
-            cpu: "100m"
+            memory: "64Mi"
+            cpu: "250m"
           limits:
-            cpu: "200m"
+            memory: "128Mi"
+            cpu: "500m"
+#---
+#apiVersion: autoscaling/v2beta2
+#kind: HorizontalPodAutoscaler
+#metadata:
+#  name: prod-app-autoscaler
+#spec:
+#  minReplicas: 1
+#  maxReplicas: 10
+#  scaleTargetRef:
+#    apiVersion: extensions/v1beta1
+#    kind: Deployment
+#    name: prod-app-deployment
+#  targetCPUUtilizationPercentage: 50
