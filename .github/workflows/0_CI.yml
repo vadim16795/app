@@ -79,4 +79,4 @@ jobs:
 
       - name: Set image , build and deploy
         run: |-
-          kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8} --dry-run -o yaml > manifests/deployment.yaml
+          kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8} --dry-run=client -o yaml > manifests/deployment.yaml
