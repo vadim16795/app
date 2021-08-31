@@ -79,7 +79,7 @@ jobs:
 
       - name: Set image , build and deploy
         run: |-
-          kubectl set image deployment/$DEPLOYMENT_NAME changeme=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+          kubectl set image deployment/$DEPLOYMENT_NAME prod-app=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
           kubectl rollout status deployment/$DEPLOYMENT_NAME
           kubectl get services -o wide
 
