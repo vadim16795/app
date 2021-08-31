@@ -60,24 +60,8 @@ jobs:
         run: |-
           docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8}"
 
-#          docker push "gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
-        # Set up kustomize
-#      - name: Set up Kustomize
-#        run: |-
-#          curl --location https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv4.2.0/kustomize_v4.2.0_linux_amd64.tar.gz | tar xz
-#          chmod u+x ./kustomize
-
-        # Get cluster info
-#      - name: Get cluster info
-#        run: |-
-#          kubectl cluster-info
-
-       # Get pods info
-#      - name: Get pods
-#        run: |-
-#          kubectl get pods --all-namespaces
-
-      - name: Set image , build and deploy
+        # Set image and deploy GKE
+      - name: Set image and deploy
         run: |-
           kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8} --dry-run=client -o yaml > manifests/deployment.yaml
           kubectl set image deployment/$DEPLOYMENT_NAME prod-app=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8}
