@@ -12,17 +12,17 @@ env:
   DEPLOYMENT_NAME: prod-app-deployment
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build the stack
-        run: docker-compose up -d
-      - name: Make tests with pytest
-        run: docker-compose exec -T app pytest -vv
+#  test:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Build the stack
+#        run: docker-compose up -d
+#      - name: Make tests with pytest
+#        run: docker-compose exec -T app pytest -vv
 
   setup-build-publish:
-    needs: test
+#    needs: test
     runs-on: ubuntu-latest
     steps:
 
@@ -77,8 +77,8 @@ jobs:
 #        run: |-
 #          kubectl get pods --all-namespaces
 
-#      - name: Set image , build and deploy
-#        run: |-
+      - name: Set image , build and deploy
+        run: |-
 #          kubectl apply -f manifests
 #          sleep 5
 #          kubectl get deployments
@@ -95,8 +95,8 @@ jobs:
 #          kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
 #          kubectl apply -f manifests
 #          kubectl rollout status deployment/$DEPLOYMENT_NAME
-#          kubectl set image deployment/$DEPLOYMENT_NAME changeme=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
-#          kubectl rollout status deployment/$DEPLOYMENT_NAME
+          kubectl set image deployment/$DEPLOYMENT_NAME changeme=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA
+          kubectl rollout status deployment/$DEPLOYMENT_NAME
 
 #          kubectl set image deployment/nginx busybox=busybox nginx=nginx:1.9.1
 #          kubectl create deployment $DEPLOYMENT_NAME --image=gcr.io/$PROJECT_ID/$IMAGE:$GITHUB_SHA --dry-run -o yaml > manifests/deployment.yaml
@@ -107,5 +107,5 @@ jobs:
 #          cat manifests/deployment.yaml
 #          ./kustomize build . | kubectl apply -f -
 #          kubectl rollout status deployment/$DEPLOYMENT_NAME
-#          kubectl get services -o wide
+          kubectl get services -o wide
 
