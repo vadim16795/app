@@ -6,7 +6,7 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: prod-app
+      app: prod-app-deployment
   strategy:
     rollingUpdate:
       maxSurge: 1
