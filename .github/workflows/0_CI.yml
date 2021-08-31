@@ -76,3 +76,8 @@ jobs:
       - name: get a list of Horizontal Pod Autoscalers in the cluster
         run: |-
           kubectl get hpa
+
+      - name: get hpa info
+        run: |-
+          kubectl describe hpa $DEPLOYMENT_NAME
+
