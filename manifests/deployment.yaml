@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prod-app-deployment
+  name: prod-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prod-app-deployment
+      app: prod-app
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -15,10 +15,10 @@ spec:
   template:
     metadata:
       labels:
-        app: prod-app-deployment
+        app: prod-app
     spec:
       containers:
-      - name: prod-app-deployment
+      - name: prod-app
         image: gcr.io/project_id/image:tag
         ports:
         - containerPort: 5000

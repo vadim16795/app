@@ -9,7 +9,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   IMAGE: prod-app
-  DEPLOYMENT_NAME: prod-app-deployment
+  DEPLOYMENT_NAME: prod-app
 
 jobs:
 #  test:
