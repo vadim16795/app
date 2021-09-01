@@ -1,5 +1,5 @@
 # Variant 8
-
+# STAGE
 #For a marketing campaign collect information about Star Wars universe using open API https://swapi.dev/
 #Store the following data in the local database:
 
