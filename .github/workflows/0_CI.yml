@@ -51,7 +51,7 @@ jobs:
           credentials: ${{ secrets.GKE_SA_KEY }}
 
        # Configure docker to use the gcloud command-line tool as a credential helper
-#      - run: |-
+        - run: |-
           gcloud --quiet auth configure-docker
 
        # Build the Docker image
