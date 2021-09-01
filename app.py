@@ -213,7 +213,7 @@ def myfunc():
     start_time = time.time()
     Parallel(n_jobs=-1, prefer="processes", verbose=0)(
             delayed(worker)(num)
-            for num in range(12000)
+            for num in range(3000)
 
     )
     end_time = time.time() - start_time
