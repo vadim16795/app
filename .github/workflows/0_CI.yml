@@ -41,13 +41,6 @@ jobs:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT }}
 
-       # Get the GKE credentials so we can deploy to the cluster
-#      - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
-#        with:
-#          cluster_name: prod-app-cluster
-#          location: europe-west1-c
-#          credentials: ${{ secrets.GKE_SA_KEY }}
-
       - name: Configure docker to use the gcloud command-line tool as a credential helper
         run: |-
           gcloud --quiet auth configure-docker
@@ -56,19 +49,14 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |-
           docker build \
-            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" \
-            --build-arg GITHUB_SHA="$GITHUB_SHA" \
-            --build-arg GITHUB_REF="$GITHUB_REF" \
-            .
+            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" .
+
       - name: Build the Docker image for stage
         if: github.ref == 'refs/heads/stage'
         run: |-
           docker build \
-            --tag "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}" \
-            --build-arg GITHUB_SHA="$GITHUB_SHA" \
-            --build-arg GITHUB_REF="$GITHUB_REF" \
-            .
-        # Push the Docker image to Google Container Registry
+            --tag "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}" .
+
       - name: Publish Docker prod image to GCR
         if: github.ref == 'refs/heads/master'
         run: |-
@@ -78,6 +66,23 @@ jobs:
         if: github.ref == 'refs/heads/stage'
         run: |-
           docker push "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}"
+
+      - name:  Get the GKE credentials so we can deploy to the prod cluster
+        if: github.ref == 'refs/heads/master'
+        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+        with:
+          cluster_name: prod-app-cluster
+          location: europe-west1-c
+          credentials: ${{ secrets.GKE_SA_KEY }}
+
+      - name:  Get the GKE credentials so we can deploy to the stage cluster
+        if: github.ref == 'refs/heads/master'
+        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+        with:
+          cluster_name: stage-app-cluster
+          location: europe-west1-c
+          credentials: ${{ secrets.GKE_SA_KEY }}
+
         # Set image and deploy to Google Kubernetes Engine
 #      - name: Set image and deploy to GKE!
 #        run: |-
