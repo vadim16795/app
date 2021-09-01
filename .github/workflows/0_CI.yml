@@ -62,20 +62,10 @@ jobs:
             --build-arg GITHUB_REF="$GITHUB_REF" \
             .
 
-
-       # Build the Docker image
-#      - name: Build the Docker image
-#        run: |-
-#          docker build \
-#            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" \
-#            --build-arg GITHUB_SHA="$GITHUB_SHA" \
-#            --build-arg GITHUB_REF="$GITHUB_REF" \
-#            .
-
-        # Push the Docker image to Google Container Registry
-#      - name: Publish Docker image to GCR
-#        run: |-
-#          docker push "gcr.io/$PROJECT_ID/PROD_IMAGE:${GITHUB_SHA::8}"
+      - name: Publish Docker image to GCR
+        if: github.ref == 'refs/heads/master'
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/PROD_IMAGE:${GITHUB_SHA::8}"
 
 #        # Set image and deploy to Google Kubernetes Engine
 #      - name: Set image and deploy to GKE!
