@@ -3,19 +3,13 @@ name: CI
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches:
-      - master
-      - stage
+    branches: [ master ]
   pull_request:
-    branches:
-      - master
-      - stage
+    branches: [ master ]
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  PROD_IMAGE: prod-app
-  PROD_DEPLOYMENT_NAME: prod-app
-  STAGE_IMAGE: stage-app
-  STAGE_DEPLOYMENT_NAME: stage-app
+  IMAGE: prod-app
+  DEPLOYMENT_NAME: prod-app
 
 jobs:
 #  test:
@@ -41,40 +35,34 @@ jobs:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT }}
 
-      - name: Configure gcloud auth
-        run: |-
-          gcloud --quiet auth configure-docker
-
-      - name : Use prod-app cluster
-        if: github.ref == 'refs/heads/stage'
-        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+       # Get the GKE credentials so we can deploy to the cluster
+      - uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
         with:
           cluster_name: prod-app-cluster
           location: europe-west1-c
           credentials: ${{ secrets.GKE_SA_KEY }}
 
+       # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |-
+          gcloud --quiet auth configure-docker
+       # Build the Docker image
       - name: Build the Docker image
-        if: github.ref == 'refs/heads/stage'
         run: |-
           docker build \
-            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" \
+            --tag "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8}" \
             --build-arg GITHUB_SHA="$GITHUB_SHA" \
             --build-arg GITHUB_REF="$GITHUB_REF" \
             .
-
+        # Push the Docker image to Google Container Registry
       - name: Publish Docker image to GCR
-        if: github.ref == 'refs/heads/stage'
         run: |-
-          docker push "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}"
-
-#        # Set image and deploy to Google Kubernetes Engine
+          docker push "gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8}"
+        # Set image and deploy to Google Kubernetes Engine
 #      - name: Set image and deploy to GKE!
 #        run: |-
 #          kubectl set image deployment/$DEPLOYMENT_NAME prod-app=gcr.io/$PROJECT_ID/$IMAGE:${GITHUB_SHA::8}
 #          kubectl set resources deployment $DEPLOYMENT_NAME --limits cpu=200m,memory=128Mi --requests cpu=100m,memory=64Mi
 #          kubectl rollout status deployment/$DEPLOYMENT_NAME
-#
 #      - name: Get services
 #        run: |-
 #          kubectl get services -o wide
-#          if: github.ref == 'refs/heads/stage'
