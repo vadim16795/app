@@ -5,7 +5,8 @@ import urllib.request
 import json
 import time
 import os
-from joblib import Parallel,delayed
+from joblib import Parallel, delayed
+
 app = Flask(__name__)
 
 os.environ['DBNAME'] = 'prod'
@@ -22,7 +23,8 @@ def index():
 @app.route('/planets')
 def planets():
     try:
-        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'), password=os.getenv('PASSWORD'),
+        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
+                                      password=os.getenv('PASSWORD'),
                                       host=os.getenv('HOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
@@ -91,12 +93,13 @@ def characters_insert_func(api_url):
             parsed_page['results'][i]['name'], parsed_page['results'][i]['gender'], parsed_page_homeworld['name'])
         try:
             cursor.execute(insert_query, values_to_insert)
-#            connection.commit()
+        #            connection.commit()
         except psycopg2.Error as e:
             resp = jsonify(success=False, reason=e.pgerror)
             resp.status_code = 500
             return resp
         connection.commit()
+
 
 def planets_insert_func(api_url):
     try:
@@ -129,7 +132,7 @@ def planets_insert_func(api_url):
                 str(i['name']), str(i['gravity']), str(i['climate']), residents_list)
             try:
                 cursor.execute(insert_query, values_to_insert)
-#                connection.commit()
+            #                connection.commit()
             except psycopg2.Error as e:
                 resp = jsonify(success=False, reason=e.pgerror)
                 resp.status_code = 500
@@ -144,7 +147,7 @@ def planets_insert_func(api_url):
 
             try:
                 cursor.execute(insert_query, values_to_insert)
-#                connection.commit()
+            #                connection.commit()
             except psycopg2.Error as e:
                 resp = jsonify(success=False, reason=e.pgerror)
                 resp.status_code = 500
@@ -208,12 +211,13 @@ def worker(i):
         print(x)
         x += 1
 
+
 @app.route('/stress')
 def myfunc():
     start_time = time.time()
     Parallel(n_jobs=-1, prefer="processes", verbose=0)(
-            delayed(worker)(num)
-            for num in range(3000)
+        delayed(worker)(num)
+        for num in range(3000)
 
     )
     end_time = time.time() - start_time
@@ -222,9 +226,5 @@ def myfunc():
     return resp
 
 
-
-
-
 if __name__ == '__main__':
     app.run()
-
