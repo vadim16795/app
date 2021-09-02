@@ -82,14 +82,16 @@ jobs:
           location: europe-west1-c
           credentials: ${{ secrets.GKE_SA_KEY }}
 
-        - name: "gcr.io/cloud-builders/gke-deploy"
-          if : github.ref == 'refs/heads/master'
-          args:
-            - run :
-            - --filename=prod_manifests/deployment.yaml
-            - --imame=gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}
-            - --location=europe-west1-c
-            - --cluster=prod-app-cluster
+
+
+# deploy container image to GKE
+      - name: "gcr.io/cloud-builders/gke-deploy"
+        if: github.ref == 'refs/heads/master'
+        run: |-
+          - --filename=kubernetes-resource-file
+          - --image=gcr.io/project-id/image:tag
+          - --location=${_CLOUDSDK_COMPUTE_ZONE}
+          - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
 
 #      - name: Deploy to prod
 #        if: github.ref == 'refs/heads/master'
@@ -107,6 +109,6 @@ jobs:
 #          kubectl set resources deployment $STAGE_DEPLOYMENT_NAME --limits cpu=200m,memory=128Mi --requests cpu=50m,memory=64Mi
 #          kubectl rollout status deployment/$STAGE_DEPLOYMENT_NAME
 
-      - name: Get services
-        run: |-
-          kubectl get services -o wide
+#      - name: Get services
+#        run: |-
+#          kubectl get services -o wide
