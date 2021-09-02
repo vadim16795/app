@@ -88,7 +88,9 @@ jobs:
 #          chmod u+x ./kustomize
     # Deploy the Docker image to the GKE cluster
       - name: Deploy
+        if: github.ref == 'refs/heads/master'
         run: |-
+          kubectl apply -f prod_manifests
           kubectl get -f prod_manifests -o yaml
 
 
