@@ -82,16 +82,11 @@ jobs:
           location: europe-west1-c
           credentials: ${{ secrets.GKE_SA_KEY }}
 
-
-
-# deploy container image to GKE
-      - name: "gcr.io/cloud-builders/gke-deploy"
-        if: github.ref == 'refs/heads/master'
+  
+      - name: Set up Kustomize
         run: |-
-          - --filename=kubernetes-resource-file
-          - --image=gcr.io/project-id/image:tag
-          - --location=${_CLOUDSDK_COMPUTE_ZONE}
-          - --cluster=${_CLOUDSDK_CONTAINER_CLUSTER}
+        curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
 
 #      - name: Deploy to prod
 #        if: github.ref == 'refs/heads/master'
