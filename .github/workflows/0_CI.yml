@@ -65,6 +65,11 @@ jobs:
 
       - name: Set image and deploy to prod GKE-cluster
         if: github.ref == 'refs/heads/master'
+        env:
+          DBNAME: ${{ secrets.PRODDBNAME }}
+          USER: ${{ secrets.USER }}
+          PASSWORD : ${{ secrets.DBPASSWORD }}
+          HOST: ${{ secrets.DB_HOST }}
         run: |-
           sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
           kubectl apply -f prod_manifests
@@ -91,6 +96,11 @@ jobs:
 
       - name: Set image and deploy to stage cluster
         if: github.ref == 'refs/heads/stage'
+        env:
+          DBNAME: ${{ secrets.STAGEDBNAME }}
+          USER: ${{ secrets.USER }}
+          PASSWORD : ${{ secrets.DBPASSWORD }}
+          HOST: ${{ secrets.DB_HOST }}
         run: |-
           sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$STAGE_IMAGE"':'"${GITHUB_SHA::8}"'@' stage_manifests/deployment.yaml
           kubectl apply -f stage_manifests

@@ -9,10 +9,10 @@ from joblib import Parallel, delayed
 
 app = Flask(__name__)
 
-os.environ['DBNAME'] = 'prod'
-os.environ['USER'] = 'postgres'
-os.environ['PASSWORD'] = 'Oper@t10n'
-os.environ['HOST'] = '34.79.218.200'
+#os.environ['DBNAME'] = 'prod'
+#os.environ['USER'] = 'postgres'
+#os.environ['PASSWORD'] = 'Oper@t10n'
+#os.environ['HOST'] = '34.79.218.200'
 
 
 @app.route('/')
@@ -50,7 +50,7 @@ def characters():
     try:
         connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
                                       password=os.getenv('PASSWORD'),
-                                      host=os.getenv('HOST'))
+                                      host=os.getenv('DHOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
         resp.status_code = 500

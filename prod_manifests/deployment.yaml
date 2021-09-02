@@ -22,6 +22,15 @@ spec:
         image: image_name
         ports:
         - containerPort: 5000
+        env:
+          - name: HOST
+            value: "$DB_HOST"
+          - name: DBNAME
+            value: "PRODDBNAME"
+          - name: USER
+            value: "$USER"
+          - name: PASSWORD
+            value: "$DBPASSWORD"
         resources:
           requests:
             memory: "256Mi"
