@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: prod-app
-        image: gcr.io/prod-app/prod-app:latest
+        image: image_name
         ports:
         - containerPort: 5000
         resources:
