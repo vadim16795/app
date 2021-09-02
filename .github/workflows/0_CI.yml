@@ -88,7 +88,6 @@ jobs:
         run: |-
           sed -i -e 's@image_name@grc.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
           kubectl apply -f prod_manifests
-#          kubectl set resources deployment $PROD_DEPLOYMENT_NAME --limits cpu=200m,memory=128Mi --requests cpu=100m,memory=64Mi
           kubectl rollout status deployment/$PROD_DEPLOYMENT_NAME
 
       - name: Get services
@@ -112,4 +111,5 @@ jobs:
 #          kubectl set image deployment/$STAGE_DEPLOYMENT_NAME prod-app=gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}
 #          kubectl set resources deployment $STAGE_DEPLOYMENT_NAME --limits cpu=200m,memory=128Mi --requests cpu=50m,memory=64Mi
 #          kubectl rollout status deployment/$STAGE_DEPLOYMENT_NAME
+#          kubectl set resources deployment $PROD_DEPLOYMENT_NAME --limits cpu=200m,memory=128Mi --requests cpu=100m,memory=64Mi
 
