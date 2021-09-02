@@ -44,27 +44,27 @@ jobs:
         run: |-
           gcloud --quiet auth configure-docker
 
-      - name: Build the Docker image for prod
-        if: github.ref == 'refs/heads/master'
-        run: |-
-          docker build \
-            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" .
+#      - name: Build the Docker image for prod
+#        if: github.ref == 'refs/heads/master'
+#        run: |-
+#          docker build \
+#            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" .
 
-      - name: Build the Docker image for stage
-        if: github.ref == 'refs/heads/stage'
-        run: |-
-          docker build \
-            --tag "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}" .
+#      - name: Build the Docker image for stage
+#        if: github.ref == 'refs/heads/stage'
+#        run: |-
+#          docker build \
+#            --tag "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}" .
 
-      - name: Publish Docker prod image to GCR
-        if: github.ref == 'refs/heads/master'
-        run: |-
-          docker push "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}"
+#      - name: Publish Docker prod image to GCR
+#        if: github.ref == 'refs/heads/master'
+#        run: |-
+#          docker push "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}"
 
-      - name: Publish Docker prod image to GCR
-        if: github.ref == 'refs/heads/stage'
-        run: |-
-          docker push "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}"
+#      - name: Publish Docker prod image to GCR
+#        if: github.ref == 'refs/heads/stage'
+#        run: |-
+#          docker push "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}"
 
       - name:  Get the GKE credentials so we can deploy to the prod cluster
         if: github.ref == 'refs/heads/master'
@@ -89,7 +89,7 @@ jobs:
     # Deploy the Docker image to the GKE cluster
       - name: Deploy
         run: |-
-          kubectl kustomize prod_manifests
+          kubectl kustomize ./prod_manifests
 
 
 
