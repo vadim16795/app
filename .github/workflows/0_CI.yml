@@ -86,7 +86,7 @@ jobs:
       - name: Set image and deploy to prod
         if: github.ref == 'refs/heads/master'
         run: |-
-          sed -i -e 's@image_name@grc.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
+          sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
           kubectl apply -f prod_manifests
           kubectl rollout status deployment/$PROD_DEPLOYMENT_NAME
 
