@@ -83,7 +83,7 @@ jobs:
 #          credentials: ${{ secrets.GKE_SA_KEY }}
 
 
-      - name: Set image and deploy to prod GKE-cluster!!!!
+      - name: Set image and deploy to prod GKE-cluster
         if: github.ref == 'refs/heads/master'
         run: |-
           sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
