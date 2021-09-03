@@ -23,9 +23,9 @@ def index():
 @app.route('/planets')
 def planets():
     try:
-        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
-                                      password=os.getenv('PASSWORD'),
-                                      host=os.getenv('HOST'))
+        connection = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'),
+                                      password=os.getenv('DB_PASSWORD'),
+                                      host=os.getenv('DB_HOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
         resp.status_code = 500
