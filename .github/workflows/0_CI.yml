@@ -48,7 +48,12 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |-
           docker build \
-            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" .
+            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" \
+            --build-arg DB_NAME=${{ secrets.DB_NAME }} \
+            --build-arg DB_USER=${{ secrets.DB_USER }} \
+            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --build-arg DB_HOST=${{ secrets.DB_HOST }} \
+            .
 
       - name: Publish Docker prod image to GCR
         if: github.ref == 'refs/heads/master'
@@ -67,7 +72,7 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: |-
           sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
-          cat prod_manifests/deployment.yaml | envsubst | kubectl apply -f prod_manifests
+          kubectl apply -f prod_manifests
           kubectl rollout status deployment/$PROD_DEPLOYMENT_NAME
 
       - name: Build the Docker image for stage
