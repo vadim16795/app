@@ -48,9 +48,9 @@ def planets():
 @app.route('/characters')
 def characters():
     try:
-        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
-                                      password=os.getenv('PASSWORD'),
-                                      host=os.getenv('DHOST'))
+        connection = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'),
+                                      password=os.getenv('DB_PASSWORD'),
+                                      host=os.getenv('DB_HOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message="cant connect to database")
         resp.status_code = 500
@@ -72,9 +72,9 @@ def characters():
 
 def characters_insert_func(api_url):
     try:
-        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
-                                      password=os.getenv('PASSWORD'),
-                                      host=os.getenv('HOST'))
+        connection = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'),
+                                      password=os.getenv('DB_PASSWORD'),
+                                      host=os.getenv('DB_HOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message='cant connect to database')
         resp.status_code = 500
@@ -103,9 +103,9 @@ def characters_insert_func(api_url):
 
 def planets_insert_func(api_url):
     try:
-        connection = psycopg2.connect(dbname=os.getenv('DBNAME'), user=os.getenv('USER'),
-                                      password=os.getenv('PASSWORD'),
-                                      host=os.getenv('HOST'))
+        connection = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'),
+                                      password=os.getenv('DB_PASSWORD'),
+                                      host=os.getenv('DB_HOST'))
     except psycopg2.Error as e:
         resp = jsonify(success=False, error=e.pgerror, message='cant connect to database')
         resp.status_code = 500
