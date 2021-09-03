@@ -9,12 +9,6 @@ from joblib import Parallel, delayed
 
 app = Flask(__name__)
 
-os.environ['DB_NAME'] = 'prod'
-os.environ['DB_USER'] = 'postgres'
-os.environ['DB_PASSWORD'] = 'Oper@t10n'
-os.environ['DB_HOST'] = '34.79.218.200'
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
