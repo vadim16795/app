@@ -9,10 +9,10 @@ from joblib import Parallel, delayed
 
 app = Flask(__name__)
 
-#os.environ['DBNAME'] = 'prod'
-#os.environ['USER'] = 'postgres'
-#os.environ['PASSWORD'] = 'Oper@t10n'
-#os.environ['HOST'] = '34.79.218.200'
+##os.environ['DBNAME'] = 'prod'
+##os.environ['USER'] = 'postgres'
+##os.environ['PASSWORD'] = 'Oper@t10n'
+##os.environ['HOST'] = '34.79.218.200'
 
 
 @app.route('/')
