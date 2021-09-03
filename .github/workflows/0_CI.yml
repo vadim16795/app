@@ -9,7 +9,6 @@ on:
   pull_request:
     branches:
       - master
-      - stage
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   PROD_IMAGE: prod-app
