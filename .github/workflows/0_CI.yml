@@ -73,7 +73,6 @@ jobs:
         run: |-
           sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
           cat prod_manifests/deployment.yaml | envsubst | kubectl apply -f prod_manifests
-          kubectl apply -f prod_manifests
           kubectl rollout status deployment/$PROD_DEPLOYMENT_NAME
 
       - name: Build the Docker image for stage
