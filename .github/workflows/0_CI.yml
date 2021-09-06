@@ -6,6 +6,10 @@ on:
     branches:
       - master
       - stage
+  pull_request:
+      branches:
+        - master
+
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
@@ -14,15 +18,7 @@ env:
   STAGE_IMAGE: stage-app
   STAGE_DEPLOYMENT_NAME: stage-app
 
-#jobs:
-#  test:
-##    runs-on: ubuntu-latest1
-##    steps:
-##      - uses: actions/checkout@v2
-##      - name: Build the stack
-##        run: docker-compose up -d
-##      - name: Make tests with pytest
-##        run: docker-compose exec -T app pytest -vv
+
 jobs:
   sonarcloud:
     runs-on: ubuntu-latest
@@ -35,87 +31,99 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#
-#  setup-build-publish:
-##    needs: test
-#    runs-on: ubuntu-latest
-#    steps:
-#
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
-#        with:
-#          service_account_key: ${{ secrets.GKE_SA_KEY }}
-#          project_id: ${{ secrets.GKE_PROJECT }}
-#
-#      - name: Configure docker to use the gcloud command-line tool as a credential helper
-#        run: |-
-#          gcloud --quiet auth configure-docker
-#
-#      - name: Build the Docker image for prod
-#        if: github.ref == 'refs/heads/master'
-#        run: |-
-#          docker build \
-#            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" \
-#            --build-arg DB_NAME=${{ secrets.DB_NAME }} \
-#            --build-arg DB_USER=${{ secrets.DB_USER }} \
-#            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-#            --build-arg DB_HOST=${{ secrets.DB_HOST }} \
-#            .
-#
-#      - name: Publish Docker prod image to GCR
-#        if: github.ref == 'refs/heads/master'
-#        run: |-
-#          docker push "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}"
-#
-#      - name:  Get the GKE credentials so we can deploy to the prod cluster
-#        if: github.ref == 'refs/heads/master'
-#        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
-#        with:
-#          cluster_name: prod-app-cluster
-#          location: europe-west1-c
-#          credentials: ${{ secrets.GKE_SA_KEY }}
-#
-#      - name: Set image and deploy to prod cluster
-#        if: github.ref == 'refs/heads/master'
-#        run: |-
-#          sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
-#          kubectl apply -f prod_manifests
-#          kubectl rollout status deployment/$PROD_DEPLOYMENT_NAME
-#
-#      - name: Build the Docker image for stage
-#        if: github.ref == 'refs/heads/stage'
-#        run: |-
-#          docker build \
-#            --tag "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}" \
-#            --build-arg DB_NAME=${{ secrets.DB_NAME }} \
-#            --build-arg DB_USER=${{ secrets.DB_USER }} \
-#            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-#            --build-arg DB_HOST=${{ secrets.DB_HOST }} \
-#            .
-#
-#      - name: Publish Docker stage image to GCR
-#        if: github.ref == 'refs/heads/stage'
-#        run: |-
-#          docker push "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}"
-#
-#      - name:  Get the GKE credentials so we can deploy to the stage cluster
-#        if: github.ref == 'refs/heads/stage'
-#        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
-#        with:
-#          cluster_name: stage-app-cluster
-#          location: europe-west1-c
-#          credentials: ${{ secrets.GKE_SA_KEY }}
-#
-#      - name: Set image and deploy to stage cluster
-#        if: github.ref == 'refs/heads/stage'
-#        run: |-
-#          sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$STAGE_IMAGE"':'"${GITHUB_SHA::8}"'@' stage_manifests/deployment.yaml
-#          kubectl apply -f stage_manifests
-#          kubectl rollout status deployment/$STAGE_DEPLOYMENT_NAME
-#
-#
-#      - name: Get services
-#        run: |-
-#          kubectl get services -o wide
+
+
+  test:
+    runs-on: ubuntu-latest
+    needs: sonarcloud
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        run: docker-compose up -d
+      - name: Make tests with pytest
+        run: docker-compose exec -T app pytest -vv
+
+
+  setup-build-publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: google-github-actions/setup-gcloud@94337306dda8180d967a56932ceb4ddcf01edae7
+        with:
+          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
+      - name: Configure docker to use the gcloud command-line tool as a credential helper
+        run: |-
+          gcloud --quiet auth configure-docker
+
+      - name: Build the Docker image for prod
+        if: github.ref == 'refs/heads/master'
+        run: |-
+          docker build \
+            --tag "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}" \
+            --build-arg DB_NAME=${{ secrets.DB_NAME }} \
+            --build-arg DB_USER=${{ secrets.DB_USER }} \
+            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --build-arg DB_HOST=${{ secrets.DB_HOST }} \
+            .
+
+      - name: Publish Docker prod image to GCR
+        if: github.ref == 'refs/heads/master'
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/$PROD_IMAGE:${GITHUB_SHA::8}"
+
+      - name:  Get the GKE credentials so we can deploy to the prod cluster
+        if: github.ref == 'refs/heads/master'
+        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+        with:
+          cluster_name: prod-app-cluster
+          location: europe-west1-c
+          credentials: ${{ secrets.GKE_SA_KEY }}
+
+      - name: Set image and deploy to prod cluster
+        if: github.ref == 'refs/heads/master'
+        run: |-
+          sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
+          kubectl apply -f prod_manifests
+          kubectl rollout status deployment/$PROD_DEPLOYMENT_NAME
+
+      - name: Build the Docker image for stage
+        if: github.ref == 'refs/heads/stage'
+        run: |-
+          docker build \
+            --tag "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}" \
+            --build-arg DB_NAME=${{ secrets.DB_NAME }} \
+            --build-arg DB_USER=${{ secrets.DB_USER }} \
+            --build-arg DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            --build-arg DB_HOST=${{ secrets.DB_HOST }} \
+            .
+
+      - name: Publish Docker stage image to GCR
+        if: github.ref == 'refs/heads/stage'
+        run: |-
+          docker push "gcr.io/$PROJECT_ID/$STAGE_IMAGE:${GITHUB_SHA::8}"
+
+      - name:  Get the GKE credentials so we can deploy to the stage cluster
+        if: github.ref == 'refs/heads/stage'
+        uses: google-github-actions/get-gke-credentials@fb08709ba27618c31c09e014e1d8364b02e5042e
+        with:
+          cluster_name: stage-app-cluster
+          location: europe-west1-c
+          credentials: ${{ secrets.GKE_SA_KEY }}
+
+      - name: Set image and deploy to stage cluster
+        if: github.ref == 'refs/heads/stage'
+        run: |-
+          sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$STAGE_IMAGE"':'"${GITHUB_SHA::8}"'@' stage_manifests/deployment.yaml
+          kubectl apply -f stage_manifests
+          kubectl rollout status deployment/$STAGE_DEPLOYMENT_NAME
+
+
+      - name: Get services
+        run: |-
+          kubectl get services -o wide
