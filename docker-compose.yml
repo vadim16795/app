@@ -21,10 +21,10 @@ services:
   app:
     build: .
     environment:
-      - DBNAME=docker
-      - USER=docker
-      - PASSWORD=docker
-      - HOST=db
+      - DB_NAME=docker
+      - DB_USER=docker
+      - DB_PASSWORD=docker
+      - DB_HOST=db
 
     command: python3 -m  flask run --host=0.0.0.0
     volumes:
