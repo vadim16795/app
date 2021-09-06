@@ -33,7 +33,7 @@ jobs:
     needs: sonarcloud
     steps:
       - uses: actions/checkout@v2
-      - name: Build the stack with DockerCompose
+      - name: Build the stack
         run: docker-compose up -d
       - name: Make tests with pytest
         run: docker-compose exec -T app pytest -vv
