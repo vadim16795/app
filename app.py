@@ -11,6 +11,7 @@ import os
 from joblib import Parallel, delayed
 
 app = Flask(__name__)
+
 _INF = float("inf")
 graphs = {}
 graphs['c'] = Counter('python_request_operations_total', 'The total number of processed requests')

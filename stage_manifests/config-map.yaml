@@ -14,4 +14,8 @@ data:
       - job_name: 'node-exporter'
         static_configs:
           - targets: ['localhost:9090']
+
+      - job_name: 'stage-app-exporter'
+        static_configs:
           - targets: ['35.195.235.170:80']
+
