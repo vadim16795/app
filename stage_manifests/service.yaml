@@ -16,9 +16,9 @@ kind: Service
 metadata:
   name: prometheus-service
 spec:
-  selector:
-    app: prometheus-server
-  type: NodePort
+  type: LoadBalancer
   ports:
     - port: 8080
       targetPort: 9090
+  selector:
+    app: prometheus-server
