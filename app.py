@@ -16,7 +16,7 @@ _INF = float("inf")
 graphs = {}
 graphs['m'] = Counter('python_request_operations_total_main', 'The total number of processed requests main page')
 graphs['c'] = Counter('python_request_operations_total_characters', 'The total number of processed requests characters page')
-graphs['p'] = Counter('python_request_operations_total_characters', 'The total number of processed requests planets page')
+graphs['p'] = Counter('python_request_operations_total_planets', 'The total number of processed requests planets page')
 graphs['h'] = Histogram('python_request_duration_seconds', 'Histogram for the duration in seconds', buckets=(1, 2, 5, 6, 10, _INF))
 
 
