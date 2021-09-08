@@ -86,6 +86,7 @@ jobs:
           sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$PROD_IMAGE"':'"${GITHUB_SHA::8}"'@' prod_manifests/deployment.yaml
           kubectl apply -f prod_manifests
           kubectl rollout status deployment/$PROD_DEPLOYMENT_NAME
+          kubectl rollout status deployment/prometheus-deployment
 
       - name: Build the Docker image for stage
         if: github.ref == 'refs/heads/stage'
@@ -117,6 +118,7 @@ jobs:
           sed -i -e 's@image_name@gcr.io/'"$PROJECT_ID"'/'"$STAGE_IMAGE"':'"${GITHUB_SHA::8}"'@' stage_manifests/deployment.yaml
           kubectl apply -f stage_manifests
           kubectl rollout status deployment/$STAGE_DEPLOYMENT_NAME
+          kubectl rollout status deployment/prometheus-deployment
 
 
       - name: Get services
