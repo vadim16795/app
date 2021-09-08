@@ -18,11 +18,11 @@ graphs = {}
 graphs['m'] = Counter('python_request_operations_total_main', 'The total number of processed requests main page')
 graphs['c'] = Counter('python_request_operations_total_characters', 'The total number of processed requests characters page')
 graphs['p'] = Counter('python_request_operations_total_planets', 'The total number of processed requests planets page')
-graphs['h'] = Histogram('python_request_duration_seconds', 'Histogram for the duration in seconds', buckets=(1, 2, 5, 6, 10, _INF))
-
-
+graphs['ch'] = Histogram('python_request_duration_seconds_characters', 'Histogram for the duration in seconds characters page', buckets=(1, 2, 5, 6, 10, _INF))
+graphs['ph'] = Histogram('python_request_duration_seconds_planets', 'Histogram for the duration in seconds planets page', buckets=(1, 2, 5, 6, 10, _INF))
 @app.route('/')
 def index():
+    start = time.time
     graphs['m'].inc()
     return render_template('index.html')
 
@@ -35,6 +35,7 @@ def requests_count():
 
 @app.route('/planets')
 def planets():
+    start = time.time()
     try:
         connection = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'),
                                       password=os.getenv('DB_PASSWORD'),
@@ -56,11 +57,14 @@ def planets():
 
     data = cursor.fetchall()
     graphs['p'].inc()
+    end = time.time()
+    graphs['ph'].observe(end - start)
     return render_template('planets.html', title='Planets', data=data)
 
 
 @app.route('/characters')
 def characters():
+    start = time.time()
     try:
         connection = psycopg2.connect(dbname=os.getenv('DB_NAME'), user=os.getenv('DB_USER'),
                                       password=os.getenv('DB_PASSWORD'),
@@ -82,6 +86,8 @@ def characters():
 
     data = cursor.fetchall()
     graphs['c'].inc()
+    end = time.time()
+    graphs['ch'].observe(end - start)
     return render_template('characters.html', title='Characters', data=data)
 
 
