@@ -23,7 +23,7 @@ graphs['h'] = Histogram('python_request_duration_seconds', 'Histogram for the du
 
 @app.route('/')
 def index():
-    graphs['c'].inc()
+    graphs['m'].inc()
     return render_template('index.html')
 
 @app.route('/metrics')
@@ -55,7 +55,7 @@ def planets():
         return resp
 
     data = cursor.fetchall()
-    graphs['d'].inc()
+    graphs['p'].inc()
     return render_template('planets.html', title='Planets', data=data)
 
 
@@ -81,7 +81,7 @@ def characters():
         return resp
 
     data = cursor.fetchall()
-    graphs['d'].inc()
+    graphs['c'].inc()
     return render_template('characters.html', title='Characters', data=data)
 
 
