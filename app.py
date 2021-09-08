@@ -4,7 +4,7 @@ import truncate_func
 import urllib.request
 import prometheus_client
 from prometheus_client.core import CollectorRegistry
-from prometheus_client import Summary,Counter,Histogram,Gauge
+from prometheus_client import Summary, Counter, Histogram, Gauge
 import json
 import time
 import os
@@ -14,11 +14,14 @@ app = Flask(__name__)
 
 _INF = float("inf")
 graphs = {}
-graphs['c'] = Counter('python_request_operations_total', 'The total number of processed requests')
-graphs['h'] = Histogram('python_request_duration_seconds', 'Histogram for the duration in seconds', buckets=(1,2,5,6,10,_INF))
+graphs['m'] = Counter('python_request_operations_total_main', 'The total number of processed requests main page')
+graphs['c'] = Counter('python_request_operations_total_characters', 'The total number of processed requests characters page')
+graphs['p'] = Counter('python_request_operations_total_characters', 'The total number of processed requests planets page')
+graphs['h'] = Histogram('python_request_duration_seconds', 'Histogram for the duration in seconds', buckets=(1, 2, 5, 6, 10, _INF))
+
+
 @app.route('/')
 def index():
-    start = time.time()
     graphs['c'].inc()
     return render_template('index.html')
 
@@ -51,6 +54,7 @@ def planets():
         return resp
 
     data = cursor.fetchall()
+    graphs['d'].inc()
     return render_template('planets.html', title='Planets', data=data)
 
 
@@ -76,6 +80,7 @@ def characters():
         return resp
 
     data = cursor.fetchall()
+    graphs['d'].inc()
     return render_template('characters.html', title='Characters', data=data)
 
 
