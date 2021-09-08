@@ -17,4 +17,4 @@ data:
 
       - job_name: 'stage-app-exporter'
         static_configs:
-          - targets: ['35.195.235.170:80']
+          - targets: ['34.78.234.48:80']
